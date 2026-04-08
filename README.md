@@ -1,58 +1,41 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ship ERP Take Home
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+## How to run the project
+- clone the repo with `https://github.com/jcdampil23/shipErp.git`
+- run the following commands in the terminal to install dependencies and setup the project
+```
+cp .env.example .env
+# Open .env and add your OPEN_WEATHER_API_KEY
+composer install
+php artisan key:generate
+touch database/database.sqlite # Optional: ensures the file exists
+php artisan migrate
+php artisan serve
+```
+- once dependencies are installed and the project is setup, run `php artisan serve` and it should be good to go
+- The routes available to you will be
+- `{baseUrl}/weather/{city}`
+- `{baseUrl}/weather/{city}/cached`
+- They should return a DTO in this format 
+``` 
+{
+  "city": string,
+  "temperature": float,
+  "description": string,
+  "timestamp": int,
+  "source": "external" or 'cache'
+}
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## How to run the tests
+- run the command `composer test` in the terminal
+- If you encounter one of the tests failing specifically `ExampleTest`, you might not have ran `php artisan key:generate`
 
-## Contributing
+## Approach
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+When interacting with external APIs you want to be able to swap them out at any time for alternatives or fallback API's to ensure downtime remains low.
 
-## Code of Conduct
+So in adherence to the maintainable code structure and also personal preference, I decided to go with Domain Driven Development or DDD with a dash of Service Oriented Architecture, (although I'm a bit old school so I still called the folder modules in the project).
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The base idea is to have multiple domains based on business rules then creating interfaces for them so that major changes or swapping 3rd party software doesn't affect the core of the project. The interfaces enforce a rigid structure of what each service should have functionally and what those functions should return.
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
